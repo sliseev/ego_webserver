@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  ego:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/usr/src/ego
+    command: go run cmd/server/main.go
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+
+volumes:
+  postgres-db:
+
+#version: '3'
+#services:
+#    api:
+#        build: .
+#        container_name: "pets"
+#        ports:
+#            - "8080:8080"
+#        environment: 
+#            - APPLICATION_PORT=:8080
+#            - DB_HOST=postgresql
+#            - DB_PORT=5432
+#            - DB_USER=postgres
+#            - DB_PASSWORD=postgres
+#            - DBNAME=postgres
+#            - SCHEMA=public
