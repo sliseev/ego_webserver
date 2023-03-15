@@ -1,2 +1,2 @@
 build:
-	go build -ldflags="-X main.Commit=$(shell git rev-parse HEAD)" cmd/server/main.go
+	go build -o ego_server -ldflags="-X main.Commit=$(shell git rev-parse HEAD)" cmd/server/main.go
