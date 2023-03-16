@@ -12,12 +12,12 @@ import (
 func createDriver(c *gin.Context) {
 	var driver Driver
 	if err := c.BindJSON(&driver); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 		return
 	}
 
 	if err := driver.Validate(); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 		return
 	}
 
@@ -29,7 +29,7 @@ func createDriver(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	result := db.Create(&rec)
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
 		return
 	}
 
@@ -45,7 +45,7 @@ func getDrivers(c *gin.Context) {
 	result := db.Find(&drivers)
 
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
 		return
 	}
 
@@ -61,7 +61,7 @@ func getDrivers(c *gin.Context) {
 func getDriver(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Wrong id value passed"})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{"wrong id value passed"})
 		return
 	}
 
@@ -70,11 +70,11 @@ func getDriver(c *gin.Context) {
 	result := db.Take(&rec, id)
 
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
 		return
 	}
 	if result.RowsAffected < 1 {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": "driver not found"})
+		c.IndentedJSON(http.StatusNotFound, ErrorResponse{"driver not found"})
 		return
 	}
 
@@ -87,13 +87,13 @@ func getDriver(c *gin.Context) {
 func updateDriver(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Wrong id value passed"})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{"wrong id value passed"})
 		return
 	}
 
 	var driver Driver
 	if err := c.BindJSON(&driver); err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{err.Error()})
 		return
 	}
 
@@ -103,11 +103,11 @@ func updateDriver(c *gin.Context) {
 	result := db.Model(&rec_id).Updates(rec_data)
 
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
 		return
 	}
 	if result.RowsAffected < 1 {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": "driver not found"})
+		c.IndentedJSON(http.StatusNotFound, ErrorResponse{"driver not found"})
 		return
 	}
 
@@ -117,7 +117,7 @@ func updateDriver(c *gin.Context) {
 func deleteDriver(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"error": "Wrong id value passed"})
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{"wrong id value passed"})
 		return
 	}
 
@@ -125,13 +125,24 @@ func deleteDriver(c *gin.Context) {
 	result := db.Delete(&database.Driver{}, id)
 
 	if result.Error != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
 		return
 	}
 	if result.RowsAffected < 1 {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": "driver not found"})
+		c.IndentedJSON(http.StatusNotFound, ErrorResponse{"driver not found"})
 		return
 	}
 
 	c.Status(http.StatusOK)
+}
+
+func getDriversCount(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+
+	var count int64
+	db.Model(&database.Driver{}).Count(&count)
+
+	c.IndentedJSON(http.StatusOK, CountResponse{
+		Count: count,
+	})
 }

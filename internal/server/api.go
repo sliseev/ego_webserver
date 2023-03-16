@@ -2,6 +2,8 @@ package server
 
 import "fmt"
 
+// Common API types
+
 type Driver struct {
 	Name    string `json:"name"`
 	License string `json:"license"`
@@ -22,9 +24,21 @@ type Client struct {
 	Phone string `json:"phone"`
 }
 
+// Universal responses
+
 type Id struct {
 	Id string `json:"id"`
 }
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type CountResponse struct {
+	Count int64 `json:"count"`
+}
+
+// Particular Request/Response's
 
 type SigninRequest struct {
 	Name     string `json:"name"`
