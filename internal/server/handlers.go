@@ -9,6 +9,16 @@ import (
 	"gorm.io/gorm"
 )
 
+// @Summary		Create driver
+// @Description	Create new driver
+// @Tags			Driver
+// @Accept			json
+// @Produce		json
+// @Param			data	body		Driver	true	"Driver data"
+// @Success		200		{object}	Id
+// @Failure		400		{object}	ErrorResponse
+// @Failure		500		{object}	ErrorResponse
+// @Router			/driver [post]
 func createDriver(c *gin.Context) {
 	var driver Driver
 	if err := c.BindJSON(&driver); err != nil {
@@ -39,6 +49,13 @@ func createDriver(c *gin.Context) {
 	})
 }
 
+// @Summary		Get drivers
+// @Description	Return all drivers
+// @Tags			Driver
+// @Produce		json
+// @Success		200		{array}	Driver
+// @Failure		500		{object}	ErrorResponse
+// @Router			/driver [get]
 func getDrivers(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var drivers []database.Driver
@@ -58,6 +75,16 @@ func getDrivers(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, response)
 }
 
+// @Summary		Get driver
+// @Description	Return driver data
+// @Tags			Driver
+// @Produce		json
+// @Param			id	path		int	true	"Driver ID"
+// @Success		200	{object}	Driver
+// @Failure		400	{object}	ErrorResponse
+// @Failure		404	{object}	ErrorResponse
+// @Failure		500	{object}	ErrorResponse
+// @Router			/driver/{id} [get]
 func getDriver(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
@@ -84,6 +111,18 @@ func getDriver(c *gin.Context) {
 	})
 }
 
+// @Summary		Update driver
+// @Description	Update existing driver
+// @Tags			Driver
+// @Accept			json
+// @Produce		json
+// @Param			data	body		Driver	true	"Driver data"
+// @Param			id	path		int	true	"Driver ID"
+// @Success		200
+// @Failure		400		{object}	ErrorResponse
+// @Failure		404		{object}	ErrorResponse
+// @Failure		500		{object}	ErrorResponse
+// @Router			/driver/{id} [put]
 func updateDriver(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -114,6 +153,16 @@ func updateDriver(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary		Delete driver
+// @Description	Delete existing driver
+// @Tags			Driver
+// @Produce		json
+// @Param			id	path		int	true	"Driver ID"
+// @Success		200
+// @Failure		400		{object}	ErrorResponse
+// @Failure		404		{object}	ErrorResponse
+// @Failure		500		{object}	ErrorResponse
+// @Router			/driver/{id} [delete]
 func deleteDriver(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
 	if err != nil {
@@ -136,6 +185,15 @@ func deleteDriver(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+// @Summary		Get drivers count
+// @Description	Return drivers count
+// @Tags			Driver
+// @Produce		json
+// @Success		200		{object}	CountResponse
+// @Failure		400		{object}	ErrorResponse
+// @Failure		404		{object}	ErrorResponse
+// @Failure		500		{object}	ErrorResponse
+// @Router			/driver/count [get]
 func getDriversCount(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 

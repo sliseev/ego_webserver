@@ -27,6 +27,14 @@ func NewLogger(verbose bool) (*zap.Logger, error) {
 	}
 }
 
+// @title		EGO Service
+// @version		1.0
+// @description	This is a simple REST server for upping up skills.
+// @contact.name	Sergey Liseev
+// @contact.email	sergey_liseev@epam.com
+// @license.name	Apache 2.0
+// @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+// @host		http://localhost:8080
 func main() {
 	flag.Parse()
 
