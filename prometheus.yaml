@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "ego_server"
+    static_configs:
+    - targets: ["ego:8080"]

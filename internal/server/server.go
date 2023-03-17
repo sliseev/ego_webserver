@@ -2,9 +2,11 @@ package server
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -49,10 +51,27 @@ func zapLoggerWrapper(l *zap.Logger) gin.HandlerFunc {
 	}
 }
 
+func promLowCardinalityAdapter() func(c *gin.Context) string {
+	return func(c *gin.Context) string {
+		url := c.Request.URL.Path
+		for _, p := range c.Params {
+			if p.Key == "id" {
+				url = strings.Replace(url, p.Value, ":id", 1)
+				break
+			}
+		}
+		return url
+	}
+}
+
 func New(db *gorm.DB, l *zap.Logger) *Server {
 	router := gin.New()
 	router.Use(zapLoggerWrapper(l), gin.Recovery())
 	router.Use(middleware(db, l))
+
+	p := ginprometheus.NewPrometheus("gin")
+	p.ReqCntURLLabelMappingFn = promLowCardinalityAdapter()
+	p.Use(router)
 
 	router.POST("/driver", createDriver)
 	router.GET("/driver", getDrivers)
