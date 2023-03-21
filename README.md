@@ -6,28 +6,66 @@ Skill up project. Uses the following staff:
 - gorm database ORM
 - swag docs generator
 - prometheus + grafana
+- wrk performance testing tool
+- nginx reverse proxy with ssl
 
-Prepare .env file based on template:
+### Prepare .env file based on template (see sample values):
 
 ```
-export DB_HOST=
-export DB_PORT=
-export DB_USER=
-export DB_PASSWORD=
-export DB_NAME=
+export DB_HOST=127.0.0.1 # for local run only, not used by docker
+export DB_PORT=5432      # for local run only, not used by docker
+
+export DB_USER=anybody
+export DB_PASSWORD=qwerty
+export DB_NAME=ego
 ```
 
-To generate swagger you must install the tool:
+### Prepare self-signed certificate for nginx:
+
 ```
-go install github.com/swaggo/swag/cmd/swag@latest
+$ mkdir .cert
+# create certificate using any instruction from the internet,
+# e.g. https://devopscube.com/create-self-signed-certificates-openssl/
+# finally you need two files in ./.cert: server.crt & server.key
 ```
 
-Grafana:
+### Start service locally:
+
+```
+$ source .env
+$ make build
+$ ./ego_server
+```
+
+### Start service in docker:
+
+```
+$ source .env
+$ docker compose up
+```
+
+### Request sample:
+
+```
+$ curl http://localhost:8080/driver/count
+$ curl -k https://localhost:8443/driver/count
+```
+
+### Swagger generation:
+
+```
+$ go install github.com/swaggo/swag/cmd/swag@latest
+$ make swagger
+```
+
+### Grafana usage:
+
 1. Login: admin/admin
 2. Create datasource: Type: Prometheus, URL: http://prometheus:9090
 3. Import dashboard: grafana.json
 
-Performance testing:
+### Performance testing:
+
 1. Download wrk image: `docker pull williamyeh/wrk`
 2. Generate drivers: `curl http://localhost:8080/testapi/drivers -d '{"count": 1000, "cleanup": true}'`
 3. Generate requests: `for((i=1;i<=1000;i++)); do echo "/driver/$i"; done > perftest/paths.txt`
