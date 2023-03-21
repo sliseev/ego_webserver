@@ -65,3 +65,9 @@ type LoginRequest struct {
 type LoginResponse struct {
 	Token string `json:"token"`
 }
+
+// @Description Test content generator data
+type GeneratorRequest struct {
+	Count   int  `json:"count"`
+	Cleanup bool `json:"cleanup"`
+}

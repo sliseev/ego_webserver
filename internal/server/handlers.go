@@ -1,10 +1,13 @@
 package server
 
 import (
+	"fmt"
+	"math/rand"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/vl80s/ego_webserver/internal/database"
 	"gorm.io/gorm"
 )
@@ -202,5 +205,50 @@ func getDriversCount(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, CountResponse{
 		Count: count,
+	})
+}
+
+// @Summary		Generate test drivers
+// @Description	Generates test drivers, performs pre-clean up if requested
+// @Tags			TestAPI
+// @Accept			json
+// @Success		200		{object}	CountResponse
+// @Failure		400		{object}	ErrorResponse
+// @Failure		500		{object}	ErrorResponse
+// @Router			/testapi/drivers [post]
+func generateDrivers(c *gin.Context) {
+	var request GeneratorRequest
+	if err := c.BindJSON(&request); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, ErrorResponse{err.Error()})
+		return
+	}
+
+	db := c.MustGet("db").(*gorm.DB)
+	if request.Cleanup {
+		db.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Exec("DELETE FROM drivers").Error; err != nil {
+				return err
+			}
+			if err := tx.Exec("ALTER SEQUENCE drivers_id_seq RESTART WITH 1").Error; err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+
+	drivers := make([]database.Driver, request.Count)
+	for i := 0; i < request.Count; i++ {
+		drivers[i].FullName = uuid.New().String()
+		drivers[i].LicenseId = fmt.Sprintf("Lic_#%d", rand.Int())
+	}
+
+	result := db.CreateInBatches(drivers, 1000)
+
+	if result.Error != nil {
+		c.IndentedJSON(http.StatusInternalServerError, ErrorResponse{result.Error.Error()})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, CountResponse{
+		Count: result.RowsAffected,
 	})
 }

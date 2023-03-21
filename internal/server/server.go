@@ -80,6 +80,8 @@ func New(db *gorm.DB, l *zap.Logger) *Server {
 	router.DELETE("/driver/:id", deleteDriver)
 	router.GET("/driver/count", getDriversCount)
 
+	router.POST("/testapi/drivers", generateDrivers)
+
 	return &Server{router, l}
 }
 
