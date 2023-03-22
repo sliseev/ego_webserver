@@ -212,6 +212,8 @@ func getDriversCount(c *gin.Context) {
 // @Description	Generates test drivers, performs pre-clean up if requested
 // @Tags			TestAPI
 // @Accept			json
+// @Produce		json
+// @Param			data	body		GeneratorRequest	true	"Generation data"
 // @Success		200		{object}	CountResponse
 // @Failure		400		{object}	ErrorResponse
 // @Failure		500		{object}	ErrorResponse

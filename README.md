@@ -1,7 +1,8 @@
 EGO WebServer
 =============
 
-Skill up project. Uses the following staff:
+Skills up project. Uses the following staff:
+- docker compose
 - gin-gonic web server
 - gorm database ORM
 - swag docs generator
@@ -26,7 +27,7 @@ export DB_NAME=ego
 $ mkdir .cert
 # create certificate using any instruction from the internet,
 # e.g. https://devopscube.com/create-self-signed-certificates-openssl/
-# finally you need two files in ./.cert: server.crt & server.key
+# finally you need to have two files in ./.cert: server.crt & server.key
 ```
 
 ### Start service locally:

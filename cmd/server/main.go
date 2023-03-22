@@ -34,7 +34,7 @@ func NewLogger(verbose bool) (*zap.Logger, error) {
 // @contact.email	sergey_liseev@epam.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-// @host		http://localhost:8080
+// @host		localhost:8080
 func main() {
 	flag.Parse()
 
