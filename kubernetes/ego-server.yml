@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ego-server
+  labels:
+    app: ego-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ego-server
+  template:
+    metadata:
+      labels:
+        app: ego-server
+    spec:
+      containers:
+      - name: ego-server
+        image: sergcpp/egoserv
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-user
+        - name: DB_PASSWORD
+          valueFrom: 
+            secretKeyRef:
+              name: postgres-secret
+              key: postgres-password
+        - name: DB_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: postgres-configmap
+              key: database-url
+        - name: DB_NAME
+          valueFrom: 
+            configMapKeyRef:
+              name: postgres-configmap
+              key: database-name
+        - name: DB_PORT
+          value: "5432"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ego-server-service
+spec:
+  selector:
+    app: ego-server
+  type: LoadBalancer  
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080

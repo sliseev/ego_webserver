@@ -22,18 +22,13 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "5433:5432"
     volumes:
       - postgres-db:/var/lib/postgresql/data
 
   prometheus:
     image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
-      - prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yaml"
 
@@ -57,5 +52,4 @@ services:
 
 volumes:
   postgres-db:
-  prometheus-data:
   grafana-data:

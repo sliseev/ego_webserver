@@ -77,3 +77,8 @@ docker run --rm \
     -v `pwd`/perftest:/ego \
     williamyeh/wrk -t4 -c100 -d10s -s /ego/script.lua http://localhost:8080/`
 ```
+
+### Kubernetes local cluster
+
+Service can be deployed into K8S local cluster.
+Please see details [here](kubernetes/README.md).
