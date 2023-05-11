@@ -2,12 +2,12 @@ Start k8s cluster
 =================
 
 ```
-$ sudo docker build -t egoserv .
-$ sudo docker tag egoserv <user>/egoserv
+$ docker build -t egoserv .
+$ docker tag egoserv <user>/egoserv
 
 $ # Upload image to https://hub.docker.com/
-$ sudo docker login -u <user>
-$ sudo docker push <user>/egoserv
+$ docker login -u <user>
+$ docker push <user>/egoserv
 
 $ cd kubernetes
 $ minikube start --driver=kvm2 (on linux: https://minikube.sigs.k8s.io/docs/drivers/kvm2/)

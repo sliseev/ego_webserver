@@ -12,6 +12,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// @Summary		Health check
+// @Description	Default health check handler, returns 200
+// @Tags			Health
+// @Success		200		{object}	Id
+// @Router			/ [get]
+func healthCheck(c *gin.Context) {
+	c.Status(http.StatusOK)
+}
+
 // @Summary		Create driver
 // @Description	Create new driver
 // @Tags			Driver

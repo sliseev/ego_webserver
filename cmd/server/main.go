@@ -29,22 +29,28 @@ func NewLogger() (*zap.Logger, error) {
 	}
 }
 
-func NewDatabase() (*gorm.DB, error) {
+func NewDatabase(logger *zap.Logger) (*gorm.DB, error) {
 	if *standalone {
+		logger.Info("Database in-memory enabled (standalone)")
 		return database.LtConnect(*verbose)
-	} else {
-		port, err := strconv.Atoi(os.Getenv("DB_PORT"))
-		if err != nil {
-			port = 5432 // default Postgres port
-		}
-		return database.PgConnect(
-			os.Getenv("DB_HOST"),
-			os.Getenv("DB_USER"),
-			os.Getenv("DB_PASSWORD"),
-			os.Getenv("DB_NAME"),
-			port,
-			*verbose)
 	}
+
+	logger.Info("Database Postgres used (env)",
+		zap.String("DB_HOST", os.Getenv("DB_HOST")),
+		zap.String("DB_PORT", os.Getenv("DB_PORT")),
+	)
+
+	port, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil {
+		port = 5432 // default Postgres port
+	}
+	return database.PgConnect(
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		port,
+		*verbose)
 }
 
 // @title		EGO Service
@@ -67,7 +73,7 @@ func main() {
 
 	logger.Info("Start service", zap.String("commit", Commit))
 
-	db, err := NewDatabase()
+	db, err := NewDatabase(logger)
 	if err != nil {
 		logger.Fatal("Connection to database failed", zap.Error(err))
 	}

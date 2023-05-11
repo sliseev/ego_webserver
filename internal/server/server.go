@@ -73,6 +73,8 @@ func New(db *gorm.DB, l *zap.Logger) *Server {
 	p.ReqCntURLLabelMappingFn = promLowCardinalityAdapter()
 	p.Use(router)
 
+	router.GET("/", healthCheck)
+
 	router.POST("/driver", createDriver)
 	router.GET("/driver", getDrivers)
 	router.GET("/driver/:id", getDriver)
