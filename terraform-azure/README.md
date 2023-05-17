@@ -1,8 +1,9 @@
 Deploy to Azure Cloud
 =====================
 
-This is the simplest possible deploy of the only one
-container egoserv from Docker Hub in standalone mode.
+This is the second version of deployment of the only one
+container egoserv from Docker Hub in standalone mode. It
+works with paid subscription due to logs.
 
 Requirements:
 - Terraform (https://developer.hashicorp.com/terraform/downloads)
@@ -15,7 +16,7 @@ $ terraform init
 $ terraform plan
 $ terraform apply
 
-# get 'container_ip_address' from output
+# get 'container_address' from output
 # check the service is up and running:
-$ curl http://<container_ip_address>:8080/driver/count
+$ curl http://<container_address>/driver/count
 ```
